@@ -1,4 +1,12 @@
 .conda/
 __pycache__/
-*.pcap
+
+# Large data files
+data/*.csv
 *.csv
+pcaps/*.pcap
+*.pcap
+
+# Model checkpoints and training artifacts
+final/checkpoints/*.pth
+*.pth

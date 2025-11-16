@@ -234,7 +234,8 @@ def pcap_to_csv(pcap_file):
         "-E", "separator=,",
         "-E", "quote=d",
         "-E", "occurrence=f",
-        "-Y", "(ip || ipv6 || arp)"
+        "-Y", "(ip || ipv6 || arp)",
+        "-c", "500000"
     ] + fields
 
     with open(output_file, "w", buffering=1) as out:
@@ -242,31 +243,23 @@ def pcap_to_csv(pcap_file):
 
     return str(output_file)
 
-files = os.listdir('./')
+files = os.listdir('../pcaps')
 
 for f in files:
     filename = f.split('.')[0]
     if f.endswith('.pcap') and files.count(f'{filename}.csv') == 0:
-        pcap_to_csv(f)
+        pcap_to_csv(os.path.join('../pcaps',f))
 
-csv = [f for f in os.listdir('./') if f.endswith('.csv') and f != 'packets_flat.csv']
-
+csv = [f for f in os.listdir('../pcaps') if f.endswith('.csv') and f != 'packets_flat.csv']
 for c in csv:
     print(f"Processing {c}...")
     try:
-        processed_df, artifacts = preprocess_packets_all(c)
+        processed_df, artifacts = preprocess_packets_all(os.path.join('../pcaps',c))
         
         # Save the processed dataframe
         output_name = c.replace('.csv', '_processed.csv')
         processed_df.to_csv(output_name, index=False)
         print(f"  -> Saved {output_name} with shape {processed_df.shape}")
-        
-        # Save artifacts for later use
-        import pickle
-        artifacts_name = c.replace('.csv', '_artifacts.pkl')
-        with open(artifacts_name, 'wb') as f:
-            pickle.dump(artifacts, f)
-        print(f"  -> Saved artifacts to {artifacts_name}")
         
     except Exception as e:
         print(f"  -> Error processing {c}: {e}")
