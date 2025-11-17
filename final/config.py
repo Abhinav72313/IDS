@@ -13,7 +13,7 @@ EPS_END = 0.05            # Minimum value of epsilon
 EPS_DECAY = 10000         # How fast epsilon decays
 TARGET_UPDATE = 5        # How often to update the target network (in episodes)
 REPLAY_MEMORY_SIZE = 50000 # Max size of the replay buffer
-LR = 0.0001               # Learning rate for the optimizer
+LR = 0.001               # Learning rate for the optimizer
 
 # Transformer Model settings
 EMBED_DIM = 128           # Embedding dimension for the Transformer

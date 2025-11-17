@@ -126,9 +126,9 @@ class DTQNAgent:
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval() # Target net is only for evaluation
         
-        # Setup optimizer with learning rate scheduling
+        # Setup optimizer
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=LR, weight_decay=1e-5)
-        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1000, gamma=0.95)
+        # Note: No learning rate scheduler - using constant learning rate
         
         # Setup replay memory
         self.memory = ReplayMemory(REPLAY_MEMORY_SIZE)
@@ -221,7 +221,7 @@ class DTQNAgent:
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0)
         
         self.optimizer.step()
-        self.scheduler.step()
+        # Note: No scheduler.step() - using constant learning rate
 
     def update_target_net(self):
         """Updates the target network by copying weights from the policy network."""

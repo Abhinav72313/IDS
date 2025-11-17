@@ -67,9 +67,6 @@ def save_checkpoint(agent, episode, episode_rewards, filename):
         "policy_net_state_dict": agent.policy_net.state_dict(),
         "target_net_state_dict": agent.target_net.state_dict(),
         "optimizer_state_dict": agent.optimizer.state_dict(),
-        "scheduler_state_dict": (
-            agent.scheduler.state_dict() if hasattr(agent, "scheduler") else None
-        ),
         "episode_rewards": episode_rewards,
         "steps_done": agent.steps_done,
         "memory": agent.memory,
@@ -99,9 +96,6 @@ def load_latest_checkpoint(agent, checkpoint_dir):
     agent.policy_net.load_state_dict(checkpoint["policy_net_state_dict"])
     agent.target_net.load_state_dict(checkpoint["target_net_state_dict"])
     agent.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-    if checkpoint["scheduler_state_dict"] and hasattr(agent, "scheduler"):
-        agent.scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
 
     # Load training state
     agent.steps_done = checkpoint["steps_done"]
@@ -282,12 +276,8 @@ for i_episode in range(start_episode, NUM_EPISODES):
         else np.mean(episode_rewards)
     )
 
-    # Get current learning rate
-    current_lr = (
-        agent.scheduler.get_last_lr()[0]
-        if hasattr(agent.scheduler, "get_last_lr")
-        else LR
-    )
+    # Get current learning rate (constant)
+    current_lr = LR
 
     # Perform quick validation with more thorough sampling
     val_metrics = agent.quick_validation(
